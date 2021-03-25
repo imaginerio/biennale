@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box } from '@chakra-ui/react';
 
 const Views = ({ activeViews }) => (
-  <Box pos="absolute" zIndex={9999} top={0} right={0}>
+  <Box pos="absolute" zIndex={9} top={0} right={0}>
     {activeViews.map(view => (
       <Box key={view.id} m={5}>
         <Box

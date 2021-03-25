@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { pick, map, uniq } from 'lodash';
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 
 import Atlas from '../components/Atlas';
 import Hands from '../components/Hands';
@@ -28,6 +28,28 @@ const Home = ({ views, years }) => {
       <Views activeViews={activeViews} />
       <Hands />
       <Atlas year={year} />
+      <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
+        <Box
+          fontSize={110}
+          letterSpacing="-20px"
+          color="rgba(204,38,178, 0.6)"
+          transform="rotate(-90deg)"
+          pos="relative"
+          top={3}
+          right={2}
+        >
+          Rio
+        </Box>
+        <Box
+          fontSize={150}
+          lineHeight="150px"
+          letterSpacing="-30px"
+          color="rgba(30,30,30,0.7)"
+          borderLeft="5px solid #CC26B2"
+        >
+          {year}
+        </Box>
+      </Flex>
     </Box>
   );
 };

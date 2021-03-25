@@ -2,13 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray } from 'lodash';
 import bbox from '@turf/bbox';
-import ReactMapGL, {
-  Source,
-  Layer,
-  NavigationControl,
-  WebMercatorViewport,
-  FlyToInterpolator,
-} from 'react-map-gl';
+import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } from 'react-map-gl';
 import mapStyle from './style.json';
 
 const Atlas = ({ year, activeView }) => {
@@ -95,9 +89,6 @@ const Atlas = ({ year, activeView }) => {
           <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
         </Source>
       )}
-      <div style={{ position: 'absolute', left: 15, top: 15 }}>
-        <NavigationControl />
-      </div>
     </ReactMapGL>
   );
 };

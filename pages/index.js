@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import dynamic from 'next/dynamic';
 import { pick, map, uniq } from 'lodash';
 import { Box } from '@chakra-ui/react';
 

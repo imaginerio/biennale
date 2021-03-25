@@ -17,7 +17,7 @@ const parse = require('wellknown');
 const parseAsync = promisify(csvParse);
 
 const Home = ({ views, years }) => {
-  const viewTimer = useRef();
+  const viewTimer = useRef(null);
   const [year, setYear] = useState(years[Math.round(years.length / 2)]);
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
   const [selectedView, setSelectedView] = useState(null);

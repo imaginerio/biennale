@@ -8,7 +8,7 @@ import styles from './Hands.module.css';
 
 const Hands = ({ frame, handler }) => {
   const [fingers, setFingers] = useState([]);
-  const handRefs = { left: useRef(), right: useRef() };
+  const handRefs = { left: useRef(null), right: useRef(null) };
 
   useEffect(() => {
     if (frame && frame.pointables) {

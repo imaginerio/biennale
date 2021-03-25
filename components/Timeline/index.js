@@ -48,9 +48,9 @@ const Timeline = ({ handler, year, frame }) => {
       onChange={handler}
       h="80px"
       pos="absolute"
-      bottom={120}
-      w="80vw"
-      left="10vw"
+      bottom="130px"
+      ml="150px"
+      w="calc(100vw - 170px)"
       zIndex={999}
       opacity="0.75"
     >

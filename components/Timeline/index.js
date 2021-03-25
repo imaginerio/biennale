@@ -1,14 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { range, last } from 'lodash';
+import { withLeapContainer } from 'react-leap';
+import Leap from 'leapjs';
 import { Flex, Box, Text, Slider, SliderTrack, SliderFilledTrack } from '@chakra-ui/react';
 
-const Timeline = ({ handler, year, years }) => {
+const Timeline = ({ handler, year, years, frame }) => {
   const [minYear] = years;
   const maxYear = last(years);
   const roundedMinYear = Math.ceil(minYear / 10) * 10;
   const roundedMaxYear = Math.floor(maxYear / 10) * 10;
   const yearRange = range(roundedMinYear, roundedMaxYear, 10);
+
+  useEffect(() => {
+    if (frame.valid && frame.gestures.length > 0) {
+      frame.gestures.some(gesture => {
+        if (gesture.type === 'circle') {
+          let clockwise = -1;
+          const pointableID = gesture.pointableIds[0];
+          const { direction } = frame.pointable(pointableID);
+          try {
+            const dotProduct = Leap.vec3.dot(direction, gesture.normal);
+
+            if (dotProduct > 0) clockwise = 1;
+            let newYear = Math.round(year + (gesture.progress / 4) * clockwise);
+            newYear = Math.min(maxYear, Math.max(minYear, newYear));
+            if (newYear !== year) {
+              return handler(newYear);
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.log(e);
+          }
+        }
+        return false;
+      });
+    }
+  }, [frame]);
 
   return (
     <Slider
@@ -73,6 +101,11 @@ Timeline.propTypes = {
   handler: PropTypes.func.isRequired,
   year: PropTypes.number.isRequired,
   years: PropTypes.arrayOf(PropTypes.number).isRequired,
+  frame: PropTypes.shape(),
 };
 
-export default Timeline;
+Timeline.defaultProps = {
+  frame: null,
+};
+
+export default withLeapContainer(Timeline);

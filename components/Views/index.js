@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react';
 
 const Views = ({ activeViews }) => (
   <Box pos="absolute" zIndex={9} top={0} right={0}>
-    {activeViews.map(view => (
+    {activeViews.slice(0, 5).map(view => (
       <Box key={view.id} m={5}>
         <Box
           w="15vw"
@@ -16,7 +16,7 @@ const Views = ({ activeViews }) => (
         <Box
           w="15vw"
           h="15vw"
-          backgroundImage={`url(${view.img_hd})`}
+          backgroundImage={`url(${view.img_sd})`}
           backgroundSize="200%"
           backgroundPosition="center"
           borderRadius="50%"

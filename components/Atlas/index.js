@@ -15,9 +15,9 @@ const Atlas = ({ year, activeView }) => {
   const mapRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
-    latitude: 29.74991,
-    longitude: -95.36026,
-    zoom: 11,
+    longitude: -43.18769244446571,
+    latitude: -22.90934766369527,
+    zoom: 14,
   });
 
   const setMapYear = () => {
@@ -39,7 +39,7 @@ const Atlas = ({ year, activeView }) => {
               filter: [
                 'all',
                 ['<=', ['get', 'firstyear'], year],
-                ['>=', ['get', 'lastyear'], year],
+                // ['>=', ['get', 'lastyear'], year],
                 ...filter,
               ],
             };

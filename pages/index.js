@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { pick, map, uniq } from 'lodash';
 import { Box, Flex } from '@chakra-ui/react';
@@ -17,12 +17,15 @@ const parse = require('wellknown');
 const parseAsync = promisify(csvParse);
 
 const Home = ({ views, years }) => {
+  const viewTimer = useRef();
   const [year, setYear] = useState(years[Math.round(years.length / 2)]);
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
   const [pointers, setPointers] = useState([]);
 
   useEffect(() => {
-    setActiveViews(views.filter(v => v.year === year));
+    setActiveViews([]);
+    clearTimeout(viewTimer.current);
+    viewTimer.current = setTimeout(() => setActiveViews(views.filter(v => v.year === year)), 1000);
   }, [year]);
 
   return (

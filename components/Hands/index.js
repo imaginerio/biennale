@@ -17,7 +17,7 @@ const Hands = ({ frame, handler }) => {
         if (pointable.finger) {
           for (let partId = 0; partId !== 4; partId += 1) {
             const posX = pointable.positions[partId][0] * 3;
-            const posY = pointable.positions[partId][2] * 3 - 200;
+            const posY = pointable.positions[partId][2] * 3 + 2000;
             const posZ = pointable.positions[partId][1] * 3 - 400;
 
             const id = `${pointable.id}_${partId}`;

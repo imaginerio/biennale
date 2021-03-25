@@ -15,7 +15,7 @@ const Views = ({ activeViews, pointers, frame, handler }) => {
         if (
           pointers.some(pointer => {
             const { x, y } = pointer;
-            return x >= left && x <= right && y >= top && y <= bottom;
+            return x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50;
           })
         ) {
           newHighlight = i;

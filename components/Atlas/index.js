@@ -1,22 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import { isArray } from 'lodash';
 import bbox from '@turf/bbox';
 import ReactMapGL, {
   Source,
   Layer,
-  Marker,
   NavigationControl,
   WebMercatorViewport,
   FlyToInterpolator,
 } from 'react-map-gl';
-import { IconButton } from '@chakra-ui/react';
-import { ViewIcon } from '@chakra-ui/icons';
-
 import mapStyle from './style.json';
 
-const Atlas = ({ year, geojson, activeBasemap, opacity, documents, basemapHandler }) => {
+const Atlas = ({ year, activeView }) => {
   const mapRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
@@ -24,8 +19,6 @@ const Atlas = ({ year, geojson, activeBasemap, opacity, documents, basemapHandle
     longitude: -95.36026,
     zoom: 11,
   });
-  const [viewpoints, setViewpoints] = useState([]);
-  const [viewcone, setViewcone] = useState(null);
 
   const setMapYear = () => {
     const map = mapRef.current.getMap();
@@ -78,27 +71,6 @@ const Atlas = ({ year, geojson, activeBasemap, opacity, documents, basemapHandle
     });
   };
 
-  useEffect(async () => {
-    if (activeBasemap) {
-      const {
-        data: { features },
-      } = await axios.get(`${process.env.NEXT_PUBLIC_SEARCH_API}/document/${activeBasemap}`);
-      const [feature] = features;
-      fitBounds(feature.geometry);
-      if (feature.properties.type.match(/view/gi)) {
-        setViewcone(feature);
-      } else {
-        setViewcone(null);
-      }
-    }
-  }, [activeBasemap]);
-
-  useEffect(() => {
-    const views = documents.find(d => d.title.match(/view/gi));
-    if (views && views.Documents) setViewpoints(views.Documents);
-    else setViewpoints([]);
-  }, [documents]);
-
   const onViewportChange = nextViewport => {
     setMapViewport(nextViewport);
   };
@@ -118,51 +90,11 @@ const Atlas = ({ year, geojson, activeBasemap, opacity, documents, basemapHandle
       onViewportChange={onViewportChange}
       {...mapViewport}
     >
-      {activeBasemap && !viewcone && (
-        <Source
-          key={activeBasemap}
-          type="raster"
-          tiles={[`${process.env.NEXT_PUBLIC_RASTER_URL}/${activeBasemap}/{z}/{x}/{y}.png`]}
-          scheme="tms"
-        >
-          <Layer id="overlay" type="raster" paint={{ 'raster-opacity': opacity }} />
-        </Source>
-      )}
-      {viewcone && (
-        <Source key={`view${activeBasemap}`} type="geojson" data={viewcone}>
+      {activeView && (
+        <Source key={`view${activeView.id}`} type="geojson" data={activeView.geojson}>
           <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
         </Source>
       )}
-      {geojson && (
-        <Source type="geojson" data={geojson}>
-          <Layer id="selected-fill" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
-          <Layer
-            id="selected-case"
-            type="line"
-            paint={{ 'line-width': 6, 'line-color': '#eeeeee' }}
-          />
-          <Layer
-            id="selected-line"
-            type="line"
-            paint={{ 'line-width': 3, 'line-color': '#000000' }}
-          />
-        </Source>
-      )}
-      {viewpoints.map(v => (
-        <Marker key={v.ssid} {...v} offsetLeft={-15} offsetTop={-15}>
-          <IconButton
-            icon={<ViewIcon />}
-            as="div"
-            w="30px"
-            h="30px"
-            minWidth="none"
-            borderRadius="50%"
-            backgroundColor="white"
-            boxShadow="md"
-            onClick={() => basemapHandler(v.ssid)}
-          />
-        </Marker>
-      ))}
       <div style={{ position: 'absolute', left: 15, top: 15 }}>
         <NavigationControl />
       </div>
@@ -172,18 +104,11 @@ const Atlas = ({ year, geojson, activeBasemap, opacity, documents, basemapHandle
 
 Atlas.propTypes = {
   year: PropTypes.number.isRequired,
-  activeBasemap: PropTypes.string,
-  geojson: PropTypes.shape(),
-  opacity: PropTypes.number,
-  documents: PropTypes.arrayOf(PropTypes.shape()),
-  basemapHandler: PropTypes.func.isRequired,
+  activeView: PropTypes.shape(),
 };
 
 Atlas.defaultProps = {
-  activeBasemap: null,
-  opacity: 0.75,
-  geojson: null,
-  documents: [],
+  activeView: null,
 };
 
 export default Atlas;

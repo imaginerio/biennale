@@ -1,13 +1,9 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable no-multi-assign */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withLeapContainer } from 'react-leap';
 
-// function moveFinger(Finger, posX, posY, posZ) {
-//   Finger.style.webkitTransform = ;
-// }
+import styles from './Hands.module.css';
 
 const Hands = ({ frame }) => {
   const [spheres, setSpheres] = useState({});
@@ -60,27 +56,26 @@ const Hands = ({ frame }) => {
   }, [frame]);
 
   return (
-    <div id="app">
-      <div id="scene">
+    <div className={styles.app}>
+      <div className={styles.scene}>
         {Object.values(fingers).map(finger => (
-          <div className="cube finger" key={finger.id} style={finger}>
-            <div className="face tp" />
-            <div className="face lt" />
-            <div className="face rt" />
-            <div className="face ft" />
-            <div className="face bk" />
+          <div className={`${styles.cube} ${styles.finger}`} key={finger.id} style={finger}>
+            <div className={`${styles.face} ${styles.tp}`} />
+            <div className={`${styles.face} ${styles.lt}`} />
+            <div className={`${styles.face} ${styles.rt}`} />
+            <div className={`${styles.face} ${styles.ft}`} />
+            <div className={`${styles.face} ${styles.bk}`} />
           </div>
         ))}
         {Object.values(spheres).map(sphere => (
-          <div className="cube sphere" key={sphere.id} style={sphere}>
-            <div className="face tp" />
-            <div className="face lt" />
-            <div className="face rt" />
-            <div className="face ft" />
-            <div className="face bk" />
+          <div className={`${styles.cube} ${styles.sphere}`} key={sphere.id} style={sphere}>
+            <div className={`${styles.face} ${styles.tp}`} />
+            <div className={`${styles.face} ${styles.lt}`} />
+            <div className={`${styles.face} ${styles.rt}`} />
+            <div className={`${styles.face} ${styles.ft}`} />
+            <div className={`${styles.face} ${styles.bk}`} />
           </div>
         ))}
-        {/* </div> */}
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ const Home = ({ views, years }) => {
   const viewTimer = useRef();
   const [year, setYear] = useState(years[Math.round(years.length / 2)]);
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
+  const [selectedView, setSelectedView] = useState(null);
   const [pointers, setPointers] = useState([]);
 
   useEffect(() => {
@@ -30,9 +31,9 @@ const Home = ({ views, years }) => {
 
   return (
     <Box w="100vw" h="100vh">
-      <Views activeViews={activeViews} pointers={pointers} />
+      <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
       <Hands handler={setPointers} />
-      <Atlas year={year} />
+      <Atlas year={year} selectedView={selectedView} />
       <Timeline year={year} years={years} handler={setYear} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box

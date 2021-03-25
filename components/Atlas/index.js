@@ -5,7 +5,7 @@ import bbox from '@turf/bbox';
 import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } from 'react-map-gl';
 import mapStyle from './style.json';
 
-const Atlas = ({ year, activeView }) => {
+const Atlas = ({ year, selectedView }) => {
   const mapRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
@@ -60,10 +60,17 @@ const Atlas = ({ year, activeView }) => {
       longitude,
       latitude,
       zoom,
+      pitch: 60,
       transitionDuration: 1000,
       transitionInterpolator: new FlyToInterpolator(),
     });
   };
+
+  useEffect(() => {
+    if (selectedView) {
+      fitBounds(selectedView.geojson);
+    }
+  }, [selectedView]);
 
   const onViewportChange = nextViewport => {
     setMapViewport(nextViewport);
@@ -84,8 +91,8 @@ const Atlas = ({ year, activeView }) => {
       onViewportChange={onViewportChange}
       {...mapViewport}
     >
-      {activeView && (
-        <Source key={`view${activeView.id}`} type="geojson" data={activeView.geojson}>
+      {selectedView && (
+        <Source key={`view${selectedView.id}`} type="geojson" data={selectedView.geojson}>
           <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
         </Source>
       )}
@@ -95,11 +102,11 @@ const Atlas = ({ year, activeView }) => {
 
 Atlas.propTypes = {
   year: PropTypes.number.isRequired,
-  activeView: PropTypes.shape(),
+  selectedView: PropTypes.shape(),
 };
 
 Atlas.defaultProps = {
-  activeView: null,
+  selectedView: null,
 };
 
 export default Atlas;

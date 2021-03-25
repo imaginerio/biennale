@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { withLeapContainer } from 'react-leap';
 import { Box } from '@chakra-ui/react';
 
-const Views = ({ activeViews, pointers }) => {
+const Views = ({ activeViews, pointers, frame, handler }) => {
   const viewRef = useRef([]);
   const [highlighted, setHighlighted] = useState(null);
 
@@ -25,6 +26,17 @@ const Views = ({ activeViews, pointers }) => {
     });
     setHighlighted(newHighlight);
   }, [pointers]);
+
+  useEffect(() => {
+    if (frame.valid && frame.gestures.length > 0) {
+      frame.gestures.some(gesture => {
+        if (gesture.type === 'keyTap' || (gesture.type === 'screenTap' && highlighted)) {
+          handler(activeViews[highlighted]);
+        }
+        return false;
+      });
+    }
+  }, [frame]);
 
   return (
     <Box pos="absolute" zIndex={9} top={0} right={0}>
@@ -61,10 +73,13 @@ const Views = ({ activeViews, pointers }) => {
 Views.propTypes = {
   activeViews: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   pointers: PropTypes.arrayOf(PropTypes.shape()),
+  frame: PropTypes.shape(),
+  handler: PropTypes.func.isRequired,
 };
 
 Views.defaultProps = {
   pointers: [],
+  frame: null,
 };
 
-export default Views;
+export default withLeapContainer(Views);

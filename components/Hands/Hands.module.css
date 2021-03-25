@@ -6,6 +6,7 @@
   overflow: hidden;
   -webkit-perspective: 1000;
   perspective: 1000;
+  z-index: 99999;
 }
 
 .scene{

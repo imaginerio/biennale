@@ -6,6 +6,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import Atlas from '../components/Atlas';
 import Hands from '../components/Hands';
 import Views from '../components/Views';
+import Timeline from '../components/Timeline';
 
 const fs = require('fs');
 const path = require('path');
@@ -28,6 +29,7 @@ const Home = ({ views, years }) => {
       <Views activeViews={activeViews} />
       <Hands />
       <Atlas year={year} />
+      <Timeline year={year} years={years} handler={setYear} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box
           fontSize={110}

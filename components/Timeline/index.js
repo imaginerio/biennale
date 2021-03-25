@@ -1,30 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { range } from 'lodash';
-import {
-  Flex,
-  Box,
-  Heading,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-} from '@chakra-ui/react';
+import { range, last } from 'lodash';
+import { Flex, Box, Text, Slider, SliderTrack, SliderFilledTrack } from '@chakra-ui/react';
 
-import config from '../../config';
+const Timeline = ({ handler, year, years }) => {
+  const [minYear] = years;
+  const maxYear = last(years);
+  const roundedMinYear = Math.ceil(minYear / 10) * 10;
+  const roundedMaxYear = Math.floor(maxYear / 10) * 10;
+  const yearRange = range(roundedMinYear, roundedMaxYear, 10);
 
-const { minYear, maxYear } = config;
-const roundedMinYear = Math.ceil(minYear / 10) * 10;
-const roundedMaxYear = Math.floor(maxYear / 10) * 10;
-const yearRange = range(roundedMinYear, roundedMaxYear, 10);
-
-const Timeline = ({ handler, year }) => (
-  <Flex py={5} pr={5} boxShadow="0 2px 2px rgba(0,0,0,0.25)" pos="relative" zIndex={2}>
-    <Flex>
-      <Heading w="100px" textAlign="center" mx={5}>
-        {year}
-      </Heading>
-    </Flex>
+  return (
     <Slider
       colorScheme="gray"
       aria-label="slider-ex-1"
@@ -32,11 +18,17 @@ const Timeline = ({ handler, year }) => (
       min={minYear}
       max={maxYear}
       onChange={handler}
-      h="40px"
+      h="80px"
+      pos="absolute"
+      bottom={120}
+      w="80vw"
+      left="10vw"
+      zIndex={999}
+      opacity="0.75"
     >
       <Flex
         pos="relative"
-        top="-12px"
+        top="45px"
         zIndex={1}
         w="100%"
         pl={`${((roundedMinYear - minYear) / (maxYear - minYear)) * 100}%`}
@@ -45,31 +37,42 @@ const Timeline = ({ handler, year }) => (
         {yearRange.map(y => (
           <React.Fragment key={y}>
             <Box
-              borderLeft="1px solid black"
+              borderLeft="1px solid white"
               boxSizing="border-box"
               w={`${100 / (yearRange.length - 1)}%`}
-              h="25px"
+              h="15px"
               lineHeight="25px"
               pl={1}
               fontSize={10}
               userSelect="none"
             >
-              {y}
+              <Text
+                display="block"
+                color="white"
+                fontFamily="Open Sans"
+                fontWeight="bold"
+                fontSize="20px"
+                pos="relative"
+                bottom="30px"
+                right="30px"
+              >
+                {y}
+              </Text>
             </Box>
           </React.Fragment>
         ))}
       </Flex>
-      <SliderTrack h="30px">
+      <SliderTrack h="80px" borderRadius="40px">
         <SliderFilledTrack />
       </SliderTrack>
-      <SliderThumb h="100%" w="16px" />
     </Slider>
-  </Flex>
-);
+  );
+};
 
 Timeline.propTypes = {
   handler: PropTypes.func.isRequired,
   year: PropTypes.number.isRequired,
+  years: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Timeline;

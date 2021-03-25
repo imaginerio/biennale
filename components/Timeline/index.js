@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { range, last } from 'lodash';
+import { range } from 'lodash';
 import { withLeapContainer } from 'react-leap';
 import Leap from 'leapjs';
 import { Flex, Box, Text, Slider, SliderTrack, SliderFilledTrack } from '@chakra-ui/react';
 
-const Timeline = ({ handler, year, years, frame }) => {
-  const [minYear] = years;
-  const maxYear = last(years);
+const Timeline = ({ handler, year, frame }) => {
+  const minYear = 1600;
+  const maxYear = 2020;
   const roundedMinYear = Math.ceil(minYear / 10) * 10;
   const roundedMaxYear = Math.floor(maxYear / 10) * 10;
-  const yearRange = range(roundedMinYear, roundedMaxYear, 10);
+  const yearRange = range(roundedMinYear, roundedMaxYear, 50);
 
   useEffect(() => {
     if (frame.valid && frame.gestures.length > 0) {
@@ -73,6 +73,7 @@ const Timeline = ({ handler, year, years, frame }) => {
               pl={1}
               fontSize={10}
               userSelect="none"
+              visibility={y === minYear ? 'hidden' : 'visible'}
             >
               <Text
                 display="block"
@@ -100,7 +101,6 @@ const Timeline = ({ handler, year, years, frame }) => {
 Timeline.propTypes = {
   handler: PropTypes.func.isRequired,
   year: PropTypes.number.isRequired,
-  years: PropTypes.arrayOf(PropTypes.number).isRequired,
   frame: PropTypes.shape(),
 };
 

@@ -34,7 +34,7 @@ const Home = ({ views, years }) => {
       <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
       <Hands handler={setPointers} />
       <Atlas year={year} selectedView={selectedView} />
-      <Timeline year={year} years={years} handler={setYear} />
+      <Timeline year={year} handler={setYear} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box
           fontSize={110}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withLeapContainer } from 'react-leap';
 import { Box } from '@chakra-ui/react';
 
-const Views = ({ activeViews, pointers, frame, handler }) => {
+const Views = ({ activeViews, pointers, frame, handler, setBlockMap }) => {
   const viewRef = useRef([]);
   const [highlighted, setHighlighted] = useState(null);
 
@@ -25,12 +25,13 @@ const Views = ({ activeViews, pointers, frame, handler }) => {
       return false;
     });
     setHighlighted(newHighlight);
+    setBlockMap(newHighlight !== null);
   }, [pointers]);
 
   useEffect(() => {
     if (frame.valid && frame.gestures.length > 0) {
       frame.gestures.some(gesture => {
-        if (gesture.type === 'keyTap' || (gesture.type === 'screenTap' && highlighted)) {
+        if ((gesture.type === 'keyTap' || gesture.type === 'screenTap') && highlighted !== null) {
           handler(activeViews[highlighted]);
         }
         return false;
@@ -75,6 +76,7 @@ Views.propTypes = {
   pointers: PropTypes.arrayOf(PropTypes.shape()),
   frame: PropTypes.shape(),
   handler: PropTypes.func.isRequired,
+  setBlockMap: PropTypes.func.isRequired,
 };
 
 Views.defaultProps = {

@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray } from 'lodash';
 import bbox from '@turf/bbox';
+import { withLeapContainer } from 'react-leap';
 import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } from 'react-map-gl';
 import mapStyle from './style.json';
 
-const Atlas = ({ year, selectedView }) => {
+const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
   const mapRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
@@ -72,6 +73,28 @@ const Atlas = ({ year, selectedView }) => {
     }
   }, [selectedView]);
 
+  useEffect(() => {
+    if (frame.valid && frame.gestures.length > 0) {
+      frame.gestures.some(gesture => {
+        if ((gesture.type === 'keyTap' || gesture.type === 'screenTap') && !blockMap) {
+          const pointer = pointers.find(p => gesture.handIds.includes(p.handId));
+          if (pointer) {
+            const coords = mapRef.current.getMap().unproject([pointer.x, pointer.y]);
+            setMapViewport({
+              ...mapViewport,
+              longitude: coords.lng,
+              latitude: coords.lat,
+              zoom: mapViewport.zoom + 1,
+              transitionDuration: 1000,
+              transitionInterpolator: new FlyToInterpolator(),
+            });
+          }
+        }
+        return false;
+      });
+    }
+  }, [frame]);
+
   const onViewportChange = nextViewport => {
     setMapViewport(nextViewport);
   };
@@ -103,10 +126,16 @@ const Atlas = ({ year, selectedView }) => {
 Atlas.propTypes = {
   year: PropTypes.number.isRequired,
   selectedView: PropTypes.shape(),
+  frame: PropTypes.shape(),
+  pointers: PropTypes.arrayOf(PropTypes.shape()),
+  blockMap: PropTypes.bool,
 };
 
 Atlas.defaultProps = {
   selectedView: null,
+  pointers: [],
+  frame: null,
+  blockMap: false,
 };
 
-export default Atlas;
+export default withLeapContainer(Atlas);

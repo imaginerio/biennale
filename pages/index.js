@@ -22,6 +22,7 @@ const Home = ({ views, years }) => {
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
   const [selectedView, setSelectedView] = useState(null);
   const [pointers, setPointers] = useState([]);
+  const [blockMap, setBlockMap] = useState(false);
 
   useEffect(() => {
     setActiveViews([]);
@@ -31,9 +32,14 @@ const Home = ({ views, years }) => {
 
   return (
     <Box w="100vw" h="100vh">
-      <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
+      <Views
+        activeViews={activeViews}
+        pointers={pointers}
+        handler={setSelectedView}
+        setBlockMap={setBlockMap}
+      />
       <Hands handler={setPointers} />
-      <Atlas year={year} selectedView={selectedView} />
+      <Atlas year={year} selectedView={selectedView} blockMap={blockMap} pointers={pointers} />
       <Timeline year={year} handler={setYear} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box

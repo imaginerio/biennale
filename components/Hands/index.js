@@ -25,6 +25,7 @@ const Hands = ({ frame, handler }) => {
               id,
               type: pointable.type,
               hand: pointable.hand().type,
+              handId: pointable.hand().id,
               part: partId,
               backgroundColor: pointable.type === 1 ? '#5DF0D7' : '#5AE660',
               transform: `translate3d(${posX}px, ${posY}px, ${posZ}px)`,
@@ -38,8 +39,9 @@ const Hands = ({ frame, handler }) => {
       Object.values(handRefs)
         .filter(h => h.current)
         .map(({ current }) => {
+          const handId = parseInt(current.getAttribute('hand'), 10);
           const { x, y } = current.getBoundingClientRect();
-          return { x, y };
+          return { x, y, handId };
         })
     );
   }, [frame]);
@@ -52,6 +54,7 @@ const Hands = ({ frame, handler }) => {
             className={`${styles.cube} ${styles.finger}`}
             key={finger.id}
             ref={finger.type === 1 && finger.part === 3 ? handRefs[finger.hand] : null}
+            hand={finger.handId}
             style={pick(finger, 'backgroundColor', 'transform')}
           >
             <div className={`${styles.face} ${styles.tp}`} />

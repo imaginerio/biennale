@@ -19,7 +19,6 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
     latitude: -22.90934766369527,
     zoom: 14,
   });
-  const [buttonHighlight, setButtonHighlight] = useState(false);
 
   const setMapYear = () => {
     const map = mapRef.current.getMap();
@@ -85,27 +84,15 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
         if ((gesture.type === 'keyTap' || gesture.type === 'screenTap') && !blockMap) {
           const pointer = pointers.find(p => gesture.handIds.includes(p.handId));
           if (pointer) {
-            if (buttonHighlight) {
-              setMapViewport({
-                ...mapViewport,
-                longitude: -43.18769244446571,
-                latitude: -22.90934766369527,
-                zoom: 14,
-                pitch: 0,
-                transitionDuration: 1000,
-                transitionInterpolator: new FlyToInterpolator(),
-              });
-            } else {
-              const coords = mapRef.current.getMap().unproject([pointer.x, pointer.y]);
-              setMapViewport({
-                ...mapViewport,
-                longitude: coords.lng,
-                latitude: coords.lat,
-                zoom: mapViewport.zoom + 1,
-                transitionDuration: 1000,
-                transitionInterpolator: new FlyToInterpolator(),
-              });
-            }
+            const coords = mapRef.current.getMap().unproject([pointer.x, pointer.y]);
+            setMapViewport({
+              ...mapViewport,
+              longitude: coords.lng,
+              latitude: coords.lat,
+              zoom: mapViewport.zoom + 1,
+              transitionDuration: 1000,
+              transitionInterpolator: new FlyToInterpolator(),
+            });
           }
         }
         return false;
@@ -114,13 +101,22 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
   }, [frame]);
 
   useEffect(() => {
-    let highlighted = false;
     const { top, bottom, left, right } = buttonRef.current.getBoundingClientRect();
-    highlighted = pointers.some(pointer => {
+    pointers.some(pointer => {
       const { x, y } = pointer;
-      return x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50;
+      if (x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50) {
+        return setMapViewport({
+          ...mapViewport,
+          longitude: -43.18769244446571,
+          latitude: -22.90934766369527,
+          zoom: 14,
+          pitch: 0,
+          transitionDuration: 1000,
+          transitionInterpolator: new FlyToInterpolator(),
+        });
+      }
+      return false;
     });
-    setButtonHighlight(highlighted);
   }, [pointers]);
 
   const onViewportChange = nextViewport => {
@@ -158,7 +154,6 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
         bottom="40px"
         left="20px"
         borderRadius="50%"
-        border={buttonHighlight ? '5px solid black' : 'none'}
       />
     </>
   );

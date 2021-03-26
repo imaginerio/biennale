@@ -32,15 +32,10 @@ const Home = ({ views, years }) => {
 
   return (
     <Box w="100vw" h="100vh">
-      <Views
-        activeViews={activeViews}
-        pointers={pointers}
-        handler={setSelectedView}
-        setBlockMap={setBlockMap}
-      />
+      <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
       <Hands handler={setPointers} />
       <Atlas year={year} selectedView={selectedView} blockMap={blockMap} pointers={pointers} />
-      <Timeline year={year} handler={setYear} />
+      <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box
           fontSize={110}

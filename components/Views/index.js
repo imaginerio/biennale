@@ -1,43 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { withLeapContainer } from 'react-leap';
 import { Box } from '@chakra-ui/react';
 
-const Views = ({ activeViews, pointers, frame, handler, setBlockMap }) => {
+const Views = ({ activeViews, pointers, handler }) => {
   const viewRef = useRef([]);
   const [highlighted, setHighlighted] = useState(null);
 
   useEffect(() => {
-    let newHighlight = null;
+    const newHighlight = null;
     viewRef.current.some((view, i) => {
       if (view) {
         const { top, bottom, left, right } = view.getBoundingClientRect();
-        if (
-          pointers.some(pointer => {
-            const { x, y } = pointer;
-            return x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50;
-          })
-        ) {
-          newHighlight = i;
-          return true;
-        }
+        pointers.some(pointer => {
+          const { x, y } = pointer;
+          if (x >= left && x <= right && y >= top && y <= bottom) {
+            return handler(activeViews[i]);
+          }
+          return false;
+        });
       }
       return false;
     });
     setHighlighted(newHighlight);
-    setBlockMap(newHighlight !== null);
   }, [pointers]);
-
-  useEffect(() => {
-    if (frame.valid && frame.gestures.length > 0) {
-      frame.gestures.some(gesture => {
-        if ((gesture.type === 'keyTap' || gesture.type === 'screenTap') && highlighted !== null) {
-          handler(activeViews[highlighted]);
-        }
-        return false;
-      });
-    }
-  }, [frame]);
 
   return (
     <Box pos="absolute" zIndex={9} top={0} right={0}>
@@ -74,14 +59,11 @@ const Views = ({ activeViews, pointers, frame, handler, setBlockMap }) => {
 Views.propTypes = {
   activeViews: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   pointers: PropTypes.arrayOf(PropTypes.shape()),
-  frame: PropTypes.shape(),
   handler: PropTypes.func.isRequired,
-  setBlockMap: PropTypes.func.isRequired,
 };
 
 Views.defaultProps = {
   pointers: [],
-  frame: null,
 };
 
-export default withLeapContainer(Views);
+export default Views;

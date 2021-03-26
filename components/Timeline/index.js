@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { range } from 'lodash';
 import { withLeapContainer } from 'react-leap';
 import Leap from 'leapjs';
 import { Flex, Box, Text, Slider, SliderTrack, SliderFilledTrack } from '@chakra-ui/react';
 
-const Timeline = ({ handler, year, frame }) => {
+const Timeline = ({ handler, year, frame, setBlockMap }) => {
+  const blockTimer = useRef(null);
   const minYear = 1600;
   const maxYear = 2020;
   const roundedMinYear = Math.ceil(minYear / 10) * 10;
@@ -16,6 +17,12 @@ const Timeline = ({ handler, year, frame }) => {
     if (frame.valid && frame.gestures.length > 0) {
       frame.gestures.some(gesture => {
         if (gesture.type === 'circle') {
+          clearTimeout(blockTimer.current);
+          blockTimer.current = setTimeout(() => {
+            setBlockMap(false);
+          }, 1000);
+          setBlockMap(true);
+
           let clockwise = -1;
           const pointableID = gesture.pointableIds[0];
           const { direction } = frame.pointable(pointableID);
@@ -101,6 +108,7 @@ const Timeline = ({ handler, year, frame }) => {
 Timeline.propTypes = {
   handler: PropTypes.func.isRequired,
   year: PropTypes.number.isRequired,
+  setBlockMap: PropTypes.func.isRequired,
   frame: PropTypes.shape(),
 };
 

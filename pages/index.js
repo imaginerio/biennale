@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { pick, map, uniq } from 'lodash';
+import ReactPlayer from 'react-player';
 import { Box, Flex } from '@chakra-ui/react';
 
 import Atlas from '../components/Atlas';
@@ -23,6 +24,7 @@ const Home = ({ views, years }) => {
   const [selectedView, setSelectedView] = useState(null);
   const [pointers, setPointers] = useState([]);
   const [blockMap, setBlockMap] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(true);
 
   useEffect(() => {
     setActiveViews([]);
@@ -35,6 +37,23 @@ const Home = ({ views, years }) => {
       <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
       <Hands handler={setPointers} />
       <Atlas year={year} selectedView={selectedView} blockMap={blockMap} pointers={pointers} />
+      {videoOpen && (
+        <Box
+          pos="absolute"
+          zIndex={9999}
+          w="480px"
+          h="calc(100vh - 160px)"
+          top={15}
+          right={15}
+          backgroundColor="black"
+          opacity={0.9}
+          borderRadius="50px"
+        >
+          <Box pos="absolute" bottom={25}>
+            <ReactPlayer url="/demo.mp4" playing loop width="480px" />
+          </Box>
+        </Box>
+      )}
       <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box

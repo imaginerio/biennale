@@ -26,6 +26,7 @@
     "react-dom": "17.0.2",
     "react-leap": "^1.0.0-beta.1",
     "react-map-gl": "^6.1.10",
+    "react-player": "^2.9.0",
     "wellknown": "^0.5.0"
   },
   "devDependencies": {

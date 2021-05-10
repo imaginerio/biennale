@@ -34,7 +34,7 @@
             "layout": {},
             "paint": {
                 "fill-color": "hsl(56, 5%, 70%)",
-                "fill-opacity": 0.85,
+                "fill-opacity": 1,
                 "fill-antialias": false
             }
         },

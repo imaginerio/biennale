@@ -1,7 +1,7 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { pick, map, uniq } from 'lodash';
-import ReactPlayer from 'react-player';
 import { Box, Flex } from '@chakra-ui/react';
 
 import Atlas from '../components/Atlas';
@@ -24,7 +24,7 @@ const Home = ({ views, years }) => {
   const [selectedView, setSelectedView] = useState(null);
   const [pointers, setPointers] = useState([]);
   const [blockMap, setBlockMap] = useState(false);
-  const [videoOpen, setVideoOpen] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(true);
 
   useEffect(() => {
     setActiveViews([]);
@@ -38,21 +38,19 @@ const Home = ({ views, years }) => {
       <Hands handler={setPointers} />
       <Atlas year={year} selectedView={selectedView} blockMap={blockMap} pointers={pointers} />
       {videoOpen && (
-        <Box
+        <Flex
           pos="absolute"
           zIndex={9999}
           w="480px"
           h="calc(100vh - 160px)"
           top={15}
           right={15}
-          backgroundColor="black"
           opacity={0.9}
-          borderRadius="50px"
+          alignItems="flex-start"
+          justifyContent="flex-end"
         >
-          <Box pos="absolute" bottom={25}>
-            <ReactPlayer url="/demo.mp4" playing loop width="480px" />
-          </Box>
-        </Box>
+          <video src="/demo.mp4" preload="auto" autoPlay loop />
+        </Flex>
       )}
       <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">

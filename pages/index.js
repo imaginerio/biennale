@@ -24,7 +24,7 @@ const Home = ({ views, years }) => {
   const [selectedView, setSelectedView] = useState(null);
   const [pointers, setPointers] = useState([]);
   const [blockMap, setBlockMap] = useState(false);
-  const [videoOpen, setVideoOpen] = useState(true);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   useEffect(() => {
     setActiveViews([]);
@@ -92,8 +92,9 @@ export async function getStaticProps() {
   const csv = await fs.promises.readFile(path.join(process.cwd(), 'data/data.csv'), 'utf-8');
   const dataRaw = await parseAsync(csv, { columns: true });
   const views = dataRaw.map(d => ({
-    ...pick(d, 'id', 'title', 'description', 'creator', 'place', 'img_hd', 'img_sd'),
+    ...pick(d, 'id', 'title', 'description', 'creator', 'place'),
     year: parseInt(d.date.match(/\d{4}/)[0], 10),
+    img: `/img/${d.img_hd.replace(/.*\//, '')}`,
     coordinates: [parseFloat(d.lng), parseFloat(d.lat)],
     geojson: parse(d.geometry),
   }));

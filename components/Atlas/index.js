@@ -7,7 +7,17 @@ import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } fro
 
 import mapStyle from './style.json';
 
-const Atlas = ({ size, year, selectedView, pointers, frame, blockMap, buttonRef, viewHandler }) => {
+const Atlas = ({
+  size,
+  year,
+  selectedView,
+  pointers,
+  frame,
+  blockMap,
+  buttonRef,
+  viewHandler,
+  viewport,
+}) => {
   const mapRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
@@ -62,7 +72,7 @@ const Atlas = ({ size, year, selectedView, pointers, frame, blockMap, buttonRef,
       ...mapViewport,
       longitude,
       latitude,
-      zoom,
+      zoom: Math.min(16.5, zoom),
       pitch: 60,
       bearing,
       transitionDuration: 1000,
@@ -84,6 +94,12 @@ const Atlas = ({ size, year, selectedView, pointers, frame, blockMap, buttonRef,
   }, [size]);
 
   useEffect(() => {
+    if (viewport) {
+      setMapViewport({ ...size, ...viewport });
+    }
+  }, [viewport]);
+
+  useEffect(() => {
     if (frame.valid && frame.gestures.length > 0) {
       frame.gestures.some(gesture => {
         if ((gesture.type === 'keyTap' || gesture.type === 'screenTap') && !blockMap) {
@@ -94,7 +110,7 @@ const Atlas = ({ size, year, selectedView, pointers, frame, blockMap, buttonRef,
               ...mapViewport,
               longitude: coords.lng,
               latitude: coords.lat,
-              zoom: mapViewport.zoom + 1,
+              zoom: Math.min(16.5, mapViewport.zoom + 1),
               transitionDuration: 1000,
               transitionInterpolator: new FlyToInterpolator(),
             });
@@ -161,6 +177,7 @@ Atlas.propTypes = {
   blockMap: PropTypes.bool,
   buttonRef: PropTypes.shape().isRequired,
   viewHandler: PropTypes.func.isRequired,
+  viewport: PropTypes.shape(),
 };
 
 Atlas.defaultProps = {
@@ -168,6 +185,7 @@ Atlas.defaultProps = {
   pointers: [],
   frame: null,
   blockMap: false,
+  viewport: null,
 };
 
 export default withLeapContainer(Atlas);

@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SizeMe } from 'react-sizeme';
-import { pick, map, uniq } from 'lodash';
+import { pick, map, uniq, random } from 'lodash';
+import { FlyToInterpolator } from 'react-map-gl';
 import { Box, Flex } from '@chakra-ui/react';
 
 import Atlas from '../components/Atlas';
@@ -22,6 +23,9 @@ const parseAsync = promisify(csvParse);
 const Home = ({ views, years }) => {
   const viewTimer = useRef(null);
   const buttonRef = useRef(null);
+  const introTimer = useRef(null);
+  const yearTimer = useRef(null);
+  const imageTimer = useRef(null);
 
   const [year, setYear] = useState(years[Math.round(years.length / 2)]);
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
@@ -29,12 +33,53 @@ const Home = ({ views, years }) => {
   const [pointers, setPointers] = useState([]);
   const [blockMap, setBlockMap] = useState(false);
   const [videoOpen, setVideoOpen] = useState(true);
+  const [introRunning, setIntroRunning] = useState(false);
+  const [viewport, setViewport] = useState(null);
 
   useEffect(() => {
-    setActiveViews([]);
-    clearTimeout(viewTimer.current);
-    viewTimer.current = setTimeout(() => setActiveViews(views.filter(v => v.year === year)), 1000);
+    if (!introRunning) {
+      setActiveViews([]);
+      clearTimeout(viewTimer.current);
+      viewTimer.current = setTimeout(
+        () => setActiveViews(views.filter(v => v.year === year)),
+        1000
+      );
+    }
   }, [year]);
+
+  useEffect(() => {
+    if (pointers.length && introRunning) {
+      setIntroRunning(false);
+      clearInterval(introTimer.current);
+      clearTimeout(yearTimer.current);
+      clearTimeout(imageTimer.current);
+      setTimeout(() => setVideoOpen(false), 5000);
+      setSelectedView(null);
+      if (!viewport) {
+        setViewport({
+          longitude: -43.18769244446571,
+          latitude: -22.90934766369527,
+          zoom: 14,
+          pitch: 0,
+          bearing: 0,
+          transitionDuration: 1000,
+          transitionInterpolator: new FlyToInterpolator(),
+        });
+      }
+    } else if (!pointers.length && !introRunning) {
+      setIntroRunning(true);
+      setViewport(null);
+      introTimer.current = setInterval(() => {
+        setVideoOpen(true);
+        const img = views[random(views.length - 1)];
+        clearTimeout(yearTimer.current);
+        yearTimer.current = setTimeout(() => setYear(img.year), 5000);
+
+        clearTimeout(imageTimer.current);
+        imageTimer.current = setTimeout(() => setSelectedView(img), 10000);
+      }, 15000);
+    }
+  }, [pointers]);
 
   return (
     <Flex w="100vw" h="100vh">
@@ -53,6 +98,7 @@ const Home = ({ views, years }) => {
               blockMap={blockMap}
               pointers={pointers}
               buttonRef={buttonRef}
+              viewport={viewport}
             />
           </Box>
         )}

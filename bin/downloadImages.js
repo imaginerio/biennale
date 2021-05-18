@@ -24,7 +24,7 @@ const loadCSV = async () => {
     await previousPromise;
     return downloadFile(
       data.img_hd,
-      path.join(__dirname, '../public', data.img_hd.replace(/.*\//, ''))
+      path.join(__dirname, '../public/img', data.img_hd.replace(/.*\//, ''))
     );
   });
   console.log('COMPLETE');

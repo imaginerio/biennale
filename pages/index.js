@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { SizeMe } from 'react-sizeme';
 import { pick, map, uniq } from 'lodash';
 import { Box, Flex } from '@chakra-ui/react';
 
@@ -8,6 +9,7 @@ import Atlas from '../components/Atlas';
 import Hands from '../components/Hands';
 import Views from '../components/Views';
 import Timeline from '../components/Timeline';
+import Viewer from '../components/Viewer';
 
 const fs = require('fs');
 const path = require('path');
@@ -35,16 +37,27 @@ const Home = ({ views, years }) => {
   }, [year]);
 
   return (
-    <Box w="100vw" h="100vh">
-      <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
+    <Flex w="100vw" h="100vh">
+      {!selectedView && (
+        <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
+      )}
       <Hands handler={setPointers} />
-      <Atlas
-        year={year}
-        selectedView={selectedView}
-        blockMap={blockMap}
-        pointers={pointers}
-        buttonRef={buttonRef}
-      />
+      <SizeMe monitorWidth monitorHeight>
+        {({ size }) => (
+          <Box w={selectedView ? '66.666vw' : '100vw'}>
+            <Atlas
+              size={size}
+              year={year}
+              selectedView={selectedView}
+              viewHandler={setSelectedView}
+              blockMap={blockMap}
+              pointers={pointers}
+              buttonRef={buttonRef}
+            />
+          </Box>
+        )}
+      </SizeMe>
+      {selectedView && <Viewer selectedView={selectedView} />}
       {videoOpen && (
         <Flex
           pos="absolute"
@@ -83,7 +96,7 @@ const Home = ({ views, years }) => {
           {year}
         </Box>
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
@@ -98,7 +111,7 @@ export async function getStaticProps() {
   const csv = await fs.promises.readFile(path.join(process.cwd(), 'data/data.csv'), 'utf-8');
   const dataRaw = await parseAsync(csv, { columns: true });
   const views = dataRaw.map(d => ({
-    ...pick(d, 'id', 'title', 'description', 'creator', 'place'),
+    ...pick(d, 'id', 'title', 'creator', 'place'),
     bearing: parseFloat(d.heading),
     year: parseInt(d.date.match(/\d{4}/)[0], 10),
     img: `/img/${d.img_hd.replace(/.*\//, '')}`,

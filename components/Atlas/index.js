@@ -7,9 +7,8 @@ import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } fro
 
 import mapStyle from './style.json';
 
-const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => {
+const Atlas = ({ size, year, selectedView, pointers, frame, blockMap, buttonRef, viewHandler }) => {
   const mapRef = useRef(null);
-  const [view, setView] = useState(selectedView);
 
   const [mapViewport, setMapViewport] = useState({
     longitude: -43.18769244446571,
@@ -44,7 +43,7 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
           return layer;
         });
         map.setStyle(style);
-        setView(null);
+        viewHandler(null);
       }
     }
   };
@@ -71,13 +70,18 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
     });
   };
 
-  useEffect(() => setView(selectedView), [selectedView]);
+  useEffect(() => {
+    if (selectedView) {
+      fitBounds(selectedView);
+    }
+  }, [selectedView]);
 
   useEffect(() => {
-    if (view) {
-      fitBounds(view);
-    }
-  }, [view]);
+    setMapViewport({
+      ...mapViewport,
+      ...size,
+    });
+  }, [size]);
 
   useEffect(() => {
     if (frame.valid && frame.gestures.length > 0) {
@@ -106,7 +110,7 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
     pointers.some(pointer => {
       const { x, y } = pointer;
       if (x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50) {
-        setView(null);
+        viewHandler(null);
         return setMapViewport({
           ...mapViewport,
           longitude: -43.18769244446571,
@@ -135,14 +139,12 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
       ref={mapRef}
       mapboxApiAccessToken="pk.eyJ1IjoiYXhpc21hcHMiLCJhIjoieUlmVFRmRSJ9.CpIxovz1TUWe_ecNLFuHNg"
       mapStyle={mapStyle}
-      width="100%"
-      height="100%"
       onLoad={onMapLoad}
       onViewportChange={onViewportChange}
       {...mapViewport}
     >
-      {view && (
-        <Source key={`view${view.id}`} type="geojson" data={view.geojson}>
+      {selectedView && (
+        <Source key={`view${selectedView.id}`} type="geojson" data={selectedView.geojson}>
           <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
         </Source>
       )}
@@ -151,12 +153,14 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
 };
 
 Atlas.propTypes = {
+  size: PropTypes.shape().isRequired,
   year: PropTypes.number.isRequired,
   selectedView: PropTypes.shape(),
   frame: PropTypes.shape(),
   pointers: PropTypes.arrayOf(PropTypes.shape()),
   blockMap: PropTypes.bool,
   buttonRef: PropTypes.shape().isRequired,
+  viewHandler: PropTypes.func.isRequired,
 };
 
 Atlas.defaultProps = {

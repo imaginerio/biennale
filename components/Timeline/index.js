@@ -3,10 +3,21 @@ import PropTypes from 'prop-types';
 import { range } from 'lodash';
 import { withLeapContainer } from 'react-leap';
 import Leap from 'leapjs';
-import { Flex, Box, Text, Slider, SliderTrack, SliderFilledTrack } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Text,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  IconButton,
+} from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 
-const Timeline = ({ handler, year, frame, setBlockMap }) => {
+const Timeline = ({ handler, year, frame, setBlockMap, buttonRef }) => {
   const blockTimer = useRef(null);
+
   const minYear = 1600;
   const maxYear = 2020;
   const roundedMinYear = Math.ceil(minYear / 10) * 10;
@@ -46,62 +57,76 @@ const Timeline = ({ handler, year, frame, setBlockMap }) => {
   }, [frame]);
 
   return (
-    <Slider
-      colorScheme="gray"
-      aria-label="slider-ex-1"
-      value={year}
-      min={minYear}
-      max={maxYear}
-      onChange={handler}
-      h="80px"
+    <Flex
       pos="absolute"
-      bottom="130px"
-      ml="150px"
-      w="calc(100vw - 170px)"
       zIndex={999}
-      opacity="0.75"
+      bottom={10}
+      alignItems="center"
+      justifyContent="center"
+      w="100vw"
     >
-      <Flex
-        pos="relative"
-        top="45px"
-        zIndex={1}
-        w="100%"
-        pl={`${((roundedMinYear - minYear) / (maxYear - minYear)) * 100}%`}
-        pr={`${((maxYear - roundedMaxYear) / (maxYear - minYear)) * 100}%`}
+      <IconButton
+        ref={buttonRef}
+        icon={<FontAwesomeIcon icon={faUndoAlt} size="3x" />}
+        w="100px"
+        h="100px"
+        mr={10}
+        borderRadius="50%"
+      />
+      <Slider
+        colorScheme="gray"
+        aria-label="slider-ex-1"
+        value={year}
+        min={minYear}
+        max={maxYear}
+        onChange={handler}
+        h="80px"
+        w="calc(100vw - 170px)"
+        maxW="1500px"
+        opacity="0.75"
       >
-        {yearRange.map(y => (
-          <React.Fragment key={y}>
-            <Box
-              borderLeft="1px solid white"
-              boxSizing="border-box"
-              w={`${100 / (yearRange.length - 1)}%`}
-              h="15px"
-              lineHeight="25px"
-              pl={1}
-              fontSize={10}
-              userSelect="none"
-              visibility={y === minYear ? 'hidden' : 'visible'}
-            >
-              <Text
-                display="block"
-                color="white"
-                fontFamily="Open Sans"
-                fontWeight="bold"
-                fontSize="20px"
-                pos="relative"
-                bottom="30px"
-                right="30px"
+        <Flex
+          pos="relative"
+          top="45px"
+          zIndex={1}
+          w="100%"
+          pl={`${((roundedMinYear - minYear) / (maxYear - minYear)) * 100}%`}
+          pr={`${((maxYear - roundedMaxYear) / (maxYear - minYear)) * 100}%`}
+        >
+          {yearRange.map(y => (
+            <React.Fragment key={y}>
+              <Box
+                borderLeft="1px solid white"
+                boxSizing="border-box"
+                w={`${100 / (yearRange.length - 1)}%`}
+                h="15px"
+                lineHeight="25px"
+                pl={1}
+                fontSize={10}
+                userSelect="none"
+                visibility={y === minYear ? 'hidden' : 'visible'}
               >
-                {y}
-              </Text>
-            </Box>
-          </React.Fragment>
-        ))}
-      </Flex>
-      <SliderTrack h="80px" borderRadius="40px">
-        <SliderFilledTrack />
-      </SliderTrack>
-    </Slider>
+                <Text
+                  display="block"
+                  color="white"
+                  fontFamily="Open Sans"
+                  fontWeight="bold"
+                  fontSize="20px"
+                  pos="relative"
+                  bottom="30px"
+                  right="30px"
+                >
+                  {y}
+                </Text>
+              </Box>
+            </React.Fragment>
+          ))}
+        </Flex>
+        <SliderTrack h="80px" borderRadius="40px">
+          <SliderFilledTrack />
+        </SliderTrack>
+      </Slider>
+    </Flex>
   );
 };
 
@@ -110,6 +135,7 @@ Timeline.propTypes = {
   year: PropTypes.number.isRequired,
   setBlockMap: PropTypes.func.isRequired,
   frame: PropTypes.shape(),
+  buttonRef: PropTypes.shape().isRequired,
 };
 
 Timeline.defaultProps = {

@@ -4,15 +4,11 @@ import { isArray } from 'lodash';
 import bbox from '@turf/bbox';
 import { withLeapContainer } from 'react-leap';
 import ReactMapGL, { Source, Layer, WebMercatorViewport, FlyToInterpolator } from 'react-map-gl';
-import { IconButton } from '@chakra-ui/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 
 import mapStyle from './style.json';
 
-const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
+const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => {
   const mapRef = useRef(null);
-  const buttonRef = useRef(null);
 
   const [mapViewport, setMapViewport] = useState({
     longitude: -43.18769244446571,
@@ -128,34 +124,22 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap }) => {
   };
 
   return (
-    <>
-      <ReactMapGL
-        ref={mapRef}
-        mapboxApiAccessToken="pk.eyJ1IjoiYXhpc21hcHMiLCJhIjoieUlmVFRmRSJ9.CpIxovz1TUWe_ecNLFuHNg"
-        mapStyle={mapStyle}
-        width="100%"
-        height="100%"
-        onLoad={onMapLoad}
-        onViewportChange={onViewportChange}
-        {...mapViewport}
-      >
-        {selectedView && (
-          <Source key={`view${selectedView.id}`} type="geojson" data={selectedView.geojson}>
-            <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
-          </Source>
-        )}
-      </ReactMapGL>
-      <IconButton
-        ref={buttonRef}
-        icon={<FontAwesomeIcon icon={faUndoAlt} size="3x" />}
-        pos="absolute"
-        w="100px"
-        h="100px"
-        bottom="40px"
-        left="20px"
-        borderRadius="50%"
-      />
-    </>
+    <ReactMapGL
+      ref={mapRef}
+      mapboxApiAccessToken="pk.eyJ1IjoiYXhpc21hcHMiLCJhIjoieUlmVFRmRSJ9.CpIxovz1TUWe_ecNLFuHNg"
+      mapStyle={mapStyle}
+      width="100%"
+      height="100%"
+      onLoad={onMapLoad}
+      onViewportChange={onViewportChange}
+      {...mapViewport}
+    >
+      {selectedView && (
+        <Source key={`view${selectedView.id}`} type="geojson" data={selectedView.geojson}>
+          <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
+        </Source>
+      )}
+    </ReactMapGL>
   );
 };
 
@@ -165,6 +149,7 @@ Atlas.propTypes = {
   frame: PropTypes.shape(),
   pointers: PropTypes.arrayOf(PropTypes.shape()),
   blockMap: PropTypes.bool,
+  buttonRef: PropTypes.shape().isRequired,
 };
 
 Atlas.defaultProps = {

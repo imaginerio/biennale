@@ -19,6 +19,8 @@ const parseAsync = promisify(csvParse);
 
 const Home = ({ views, years }) => {
   const viewTimer = useRef(null);
+  const buttonRef = useRef(null);
+
   const [year, setYear] = useState(years[Math.round(years.length / 2)]);
   const [activeViews, setActiveViews] = useState(views.filter(v => v.year === year));
   const [selectedView, setSelectedView] = useState(null);
@@ -36,15 +38,21 @@ const Home = ({ views, years }) => {
     <Box w="100vw" h="100vh">
       <Views activeViews={activeViews} pointers={pointers} handler={setSelectedView} />
       <Hands handler={setPointers} />
-      <Atlas year={year} selectedView={selectedView} blockMap={blockMap} pointers={pointers} />
+      <Atlas
+        year={year}
+        selectedView={selectedView}
+        blockMap={blockMap}
+        pointers={pointers}
+        buttonRef={buttonRef}
+      />
       {videoOpen && (
         <Flex
           pos="absolute"
           zIndex={9999}
           w="480px"
           h="calc(100vh - 160px)"
-          top={15}
-          right={15}
+          top={280}
+          left="40px"
           opacity={0.9}
           alignItems="flex-start"
           justifyContent="flex-end"
@@ -52,10 +60,10 @@ const Home = ({ views, years }) => {
           <video src="/demo.mp4" preload="auto" autoPlay loop />
         </Flex>
       )}
-      <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} />
+      <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} buttonRef={buttonRef} />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box
-          fontSize={110}
+          fontSize={140}
           letterSpacing="-20px"
           color="rgba(204,38,178, 0.6)"
           transform="rotate(-90deg)"
@@ -66,9 +74,9 @@ const Home = ({ views, years }) => {
           Rio
         </Box>
         <Box
-          fontSize={150}
-          lineHeight="150px"
-          letterSpacing="-30px"
+          fontSize={200}
+          lineHeight="200px"
+          letterSpacing="-40px"
           color="rgba(30,30,30,0.7)"
           borderLeft="5px solid #CC26B2"
         >

@@ -25,7 +25,7 @@ const Views = ({ activeViews, pointers, handler }) => {
   }, [pointers]);
 
   return (
-    <Box pos="absolute" zIndex={9} top={0} right={0}>
+    <Box pos="absolute" zIndex={9} top={10} right={10}>
       {activeViews.slice(0, 5).map((view, i) => (
         <Box
           key={view.id}
@@ -35,16 +35,16 @@ const Views = ({ activeViews, pointers, handler }) => {
           }}
         >
           <Box
-            w="15vw"
-            h="15vw"
+            w="250px"
+            h="250px"
             border="6px solid"
             borderColor={highlighted === i ? 'black' : 'rgba(255, 255, 255, 0.6)'}
             borderRadius="50%"
             pos="absolute"
           />
           <Box
-            w="15vw"
-            h="15vw"
+            w="250px"
+            h="250px"
             backgroundImage={`url(${view.img})`}
             backgroundSize="200%"
             backgroundPosition="center"

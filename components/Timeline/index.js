@@ -82,7 +82,7 @@ const Timeline = ({ handler, year, frame, setBlockMap, buttonRef }) => {
         onChange={handler}
         h="80px"
         w="calc(100vw - 170px)"
-        maxW="1500px"
+        maxW="1200px"
         opacity="0.75"
       >
         <Flex

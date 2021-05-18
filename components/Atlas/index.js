@@ -106,6 +106,7 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
     pointers.some(pointer => {
       const { x, y } = pointer;
       if (x >= left - 50 && x <= right + 50 && y >= top - 50 && y <= bottom + 50) {
+        setView(null);
         return setMapViewport({
           ...mapViewport,
           longitude: -43.18769244446571,

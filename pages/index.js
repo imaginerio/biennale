@@ -99,6 +99,7 @@ export async function getStaticProps() {
   const dataRaw = await parseAsync(csv, { columns: true });
   const views = dataRaw.map(d => ({
     ...pick(d, 'id', 'title', 'description', 'creator', 'place'),
+    bearing: parseFloat(d.heading),
     year: parseInt(d.date.match(/\d{4}/)[0], 10),
     img: `/img/${d.img_hd.replace(/.*\//, '')}`,
     coordinates: [parseFloat(d.lng), parseFloat(d.lat)],

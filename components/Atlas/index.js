@@ -9,6 +9,7 @@ import mapStyle from './style.json';
 
 const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => {
   const mapRef = useRef(null);
+  const [view, setView] = useState(selectedView);
 
   const [mapViewport, setMapViewport] = useState({
     longitude: -43.18769244446571,
@@ -43,13 +44,14 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
           return layer;
         });
         map.setStyle(style);
+        setView(null);
       }
     }
   };
   useEffect(setMapYear, [year]);
 
-  const fitBounds = geom => {
-    const [minX, minY, maxX, maxY] = bbox(geom);
+  const fitBounds = ({ geojson, bearing }) => {
+    const [minX, minY, maxX, maxY] = bbox(geojson);
     const { longitude, latitude, zoom } = new WebMercatorViewport(mapViewport).fitBounds(
       [
         [minX, minY],
@@ -63,16 +65,19 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
       latitude,
       zoom,
       pitch: 60,
+      bearing,
       transitionDuration: 1000,
       transitionInterpolator: new FlyToInterpolator(),
     });
   };
 
+  useEffect(() => setView(selectedView), [selectedView]);
+
   useEffect(() => {
-    if (selectedView) {
-      fitBounds(selectedView.geojson);
+    if (view) {
+      fitBounds(view);
     }
-  }, [selectedView]);
+  }, [view]);
 
   useEffect(() => {
     if (frame.valid && frame.gestures.length > 0) {
@@ -107,6 +112,7 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
           latitude: -22.90934766369527,
           zoom: 14,
           pitch: 0,
+          bearing: 0,
           transitionDuration: 1000,
           transitionInterpolator: new FlyToInterpolator(),
         });
@@ -134,8 +140,8 @@ const Atlas = ({ year, selectedView, pointers, frame, blockMap, buttonRef }) => 
       onViewportChange={onViewportChange}
       {...mapViewport}
     >
-      {selectedView && (
-        <Source key={`view${selectedView.id}`} type="geojson" data={selectedView.geojson}>
+      {view && (
+        <Source key={`view${view.id}`} type="geojson" data={view.geojson}>
           <Layer id="viewcone" type="fill" paint={{ 'fill-color': 'rgba(0,0,0,0.25)' }} />
         </Source>
       )}

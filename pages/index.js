@@ -112,7 +112,6 @@ const Home = ({ views, years }) => {
           pos="absolute"
           zIndex={9999}
           w="480px"
-          h="calc(100vh - 160px)"
           top={280}
           left="40px"
           opacity={0.9}

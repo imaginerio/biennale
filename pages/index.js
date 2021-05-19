@@ -12,6 +12,8 @@ import Views from '../components/Views';
 import Timeline from '../components/Timeline';
 import Viewer from '../components/Viewer';
 
+import useInterval from '../lib/useInterval';
+
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
@@ -23,7 +25,6 @@ const parseAsync = promisify(csvParse);
 const Home = ({ views, years }) => {
   const viewTimer = useRef(null);
   const buttonRef = useRef(null);
-  const introTimer = useRef(null);
   const yearTimer = useRef(null);
   const imageTimer = useRef(null);
 
@@ -34,23 +35,33 @@ const Home = ({ views, years }) => {
   const [blockMap, setBlockMap] = useState(false);
   const [videoOpen, setVideoOpen] = useState(true);
   const [introRunning, setIntroRunning] = useState(false);
+  const [introInterval, setIntroInterval] = useState(15000);
   const [viewport, setViewport] = useState(null);
 
   useEffect(() => {
-    if (!introRunning) {
-      setActiveViews([]);
-      clearTimeout(viewTimer.current);
-      viewTimer.current = setTimeout(
-        () => setActiveViews(views.filter(v => v.year === year)),
-        1000
-      );
-    }
+    if (!introRunning) setActiveViews([]);
+    clearTimeout(viewTimer.current);
+    viewTimer.current = setTimeout(() => setActiveViews(views.filter(v => v.year === year)), 1000);
   }, [year]);
+
+  useInterval(() => {
+    setVideoOpen(true);
+    setIntroRunning(true);
+    const img = views[random(views.length - 1)];
+    clearTimeout(yearTimer.current);
+    yearTimer.current = setTimeout(() => {
+      setYear(img.year);
+      setSelectedView(null);
+    }, 5000);
+
+    clearTimeout(imageTimer.current);
+    imageTimer.current = setTimeout(() => setSelectedView(img), 10000);
+  }, introInterval);
 
   useEffect(() => {
     if (pointers.length && introRunning) {
       setIntroRunning(false);
-      clearInterval(introTimer.current);
+      setIntroInterval(null);
       clearTimeout(yearTimer.current);
       clearTimeout(imageTimer.current);
       setTimeout(() => setVideoOpen(false), 5000);
@@ -67,17 +78,7 @@ const Home = ({ views, years }) => {
         });
       }
     } else if (!pointers.length && !introRunning) {
-      setIntroRunning(true);
-      setViewport(null);
-      introTimer.current = setInterval(() => {
-        setVideoOpen(true);
-        const img = views[random(views.length - 1)];
-        clearTimeout(yearTimer.current);
-        yearTimer.current = setTimeout(() => setYear(img.year), 5000);
-
-        clearTimeout(imageTimer.current);
-        imageTimer.current = setTimeout(() => setSelectedView(img), 10000);
-      }, 15000);
+      setIntroInterval(15000);
     }
   }, [pointers]);
 
@@ -89,7 +90,7 @@ const Home = ({ views, years }) => {
       <Hands handler={setPointers} />
       <SizeMe monitorWidth monitorHeight>
         {({ size }) => (
-          <Box w={selectedView ? '66.666vw' : '100vw'}>
+          <Box w="100vw">
             <Atlas
               size={size}
               year={year}
@@ -119,7 +120,13 @@ const Home = ({ views, years }) => {
           <video src="/demo.mp4" preload="auto" autoPlay loop />
         </Flex>
       )}
-      <Timeline year={year} handler={setYear} setBlockMap={setBlockMap} buttonRef={buttonRef} />
+      <Timeline
+        year={year}
+        handler={setYear}
+        setBlockMap={setBlockMap}
+        buttonRef={buttonRef}
+        hide={selectedView}
+      />
       <Flex pos="absolute" zIndex={9} top={10} left={5} fontFamily="Open Sans" fontWeight="bold">
         <Box
           fontSize={140}

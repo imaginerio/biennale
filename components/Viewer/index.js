@@ -4,8 +4,16 @@ import { omit } from 'lodash';
 import { Stack, Image, Grid, Box } from '@chakra-ui/react';
 
 const Viewer = ({ selectedView }) => (
-  <Stack h="100%" w="100%" pos="relative" backgroundColor="black" spacing={10} align="stretch">
-    <Image src={selectedView.img} />
+  <Stack
+    h="100%"
+    w="33vw"
+    right={0}
+    pos="absolute"
+    backgroundColor="black"
+    spacing={10}
+    align="stretch"
+  >
+    <Image src={selectedView.img} maxH="60vh" />
     <Grid color="white" px={10} templateColumns="repeat(2, 1fr)" gridGap={10}>
       {Object.keys(omit(selectedView, 'bearing', 'coordinates', 'geojson', 'id', 'img'))
         .filter(k => selectedView[k])

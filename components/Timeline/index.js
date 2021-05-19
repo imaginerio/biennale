@@ -15,7 +15,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 
-const Timeline = ({ handler, year, frame, setBlockMap, buttonRef }) => {
+const Timeline = ({ handler, year, frame, setBlockMap, buttonRef, hide }) => {
   const blockTimer = useRef(null);
 
   const minYear = 1600;
@@ -64,6 +64,7 @@ const Timeline = ({ handler, year, frame, setBlockMap, buttonRef }) => {
       alignItems="center"
       justifyContent="center"
       w="100vw"
+      opacity={hide ? 0 : 1}
     >
       <IconButton
         ref={buttonRef}
@@ -136,10 +137,12 @@ Timeline.propTypes = {
   setBlockMap: PropTypes.func.isRequired,
   frame: PropTypes.shape(),
   buttonRef: PropTypes.shape().isRequired,
+  hide: PropTypes.bool,
 };
 
 Timeline.defaultProps = {
   frame: null,
+  hide: false,
 };
 
 export default withLeapContainer(Timeline);

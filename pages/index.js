@@ -169,7 +169,8 @@ export async function getStaticProps() {
     ...pick(d, 'id', 'title', 'creator', 'place'),
     bearing: parseFloat(d.heading),
     year: parseInt(d.date.match(/\d{4}/)[0], 10),
-    img: `/img/${d.img_hd.replace(/.*\//, '')}`,
+    img_low: `/img/low/${d.img_hd.replace(/.*\//, '')}`,
+    img_hi: `/img/hi/${d.img_hd.replace(/.*\//, '')}`,
     coordinates: [parseFloat(d.lng), parseFloat(d.lat)],
     geojson: parse(d.geometry),
   }));

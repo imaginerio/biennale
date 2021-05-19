@@ -22,9 +22,13 @@ const loadCSV = async () => {
   const dataRaw = await parseAsync(csv, { columns: true });
   await dataRaw.reduce(async (previousPromise, data) => {
     await previousPromise;
-    return downloadFile(
+    await downloadFile(
       data.img_hd,
-      path.join(__dirname, '../public/img', data.img_hd.replace(/.*\//, ''))
+      path.join(__dirname, '../public/img/hi', data.img_hd.replace(/.*\//, ''))
+    );
+    return downloadFile(
+      data.img_sd,
+      path.join(__dirname, '../public/img/low', data.img_hd.replace(/.*\//, ''))
     );
   });
   console.log('COMPLETE');

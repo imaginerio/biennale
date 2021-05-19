@@ -40,7 +40,7 @@ const Viewer = ({ selectedView, pointers, viewHandler }) => {
         borderRadius="50%"
         colorScheme="blackAlpha"
       />
-      <Image src={selectedView.img} maxH="60vh" />
+      <Image src={selectedView.img_hi} maxH="60vh" />
       <Grid color="white" px={10} templateColumns="repeat(2, 1fr)" gridGap={10}>
         {Object.keys(omit(selectedView, 'bearing', 'coordinates', 'geojson', 'id', 'img'))
           .filter(k => selectedView[k])

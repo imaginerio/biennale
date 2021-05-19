@@ -45,7 +45,7 @@ const Views = ({ activeViews, pointers, handler }) => {
           <Box
             w="250px"
             h="250px"
-            backgroundImage={`url(${view.img})`}
+            backgroundImage={`url(${view.img_low})`}
             backgroundSize="200%"
             backgroundPosition="center"
             borderRadius="50%"

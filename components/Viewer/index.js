@@ -42,7 +42,9 @@ const Viewer = ({ selectedView, pointers, viewHandler }) => {
       />
       <Image src={selectedView.img_hi} maxH="60vh" />
       <Grid color="white" px={10} templateColumns="repeat(2, 1fr)" gridGap={10}>
-        {Object.keys(omit(selectedView, 'bearing', 'coordinates', 'geojson', 'id', 'img'))
+        {Object.keys(
+          omit(selectedView, 'bearing', 'coordinates', 'geojson', 'id', 'img_hi', 'img_low')
+        )
           .filter(k => selectedView[k])
           .map(key => (
             <React.Fragment key={key}>

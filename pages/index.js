@@ -104,7 +104,9 @@ const Home = ({ views, years }) => {
           </Box>
         )}
       </SizeMe>
-      {selectedView && <Viewer selectedView={selectedView} />}
+      {selectedView && (
+        <Viewer selectedView={selectedView} pointers={pointers} viewHandler={setSelectedView} />
+      )}
       {videoOpen && (
         <Flex
           pos="absolute"

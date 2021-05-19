@@ -119,7 +119,7 @@ const Home = ({ views, years }) => {
           alignItems="flex-start"
           justifyContent="flex-end"
         >
-          <video src="/demo.mp4" preload="auto" autoPlay loop />
+          <video src="/demo.mp4" preload="auto" autoPlay loop muted />
         </Flex>
       )}
       <Timeline
